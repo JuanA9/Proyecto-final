@@ -26,7 +26,7 @@ const RegisterScreen = ({ setIsAuthenticated }) => {
     return (
         <Center w="100%" bg={bgColor} flex={1}>
             <Image 
-                source={require('../../assets/icon.png')} 
+                source={require('../../assets/Rectangle60.png')} 
                 style={{ width: '100%', height: 200, marginBottom: 20 }} 
                 resizeMode="contain"
             />

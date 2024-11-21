@@ -3,7 +3,7 @@ import { Text, Image } from 'react-native';
 import { NativeBaseProvider, Box, Heading, VStack, FormControl, HStack, Input, Button, Link, Center, useColorModeValue, useBreakpointValue } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 
-const LoginScreen = ({ setIsAuthenticated }) => {
+const Alumno = ({ setIsAuthenticated }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
@@ -73,4 +73,4 @@ const LoginScreen = ({ setIsAuthenticated }) => {
     );
 };
 
-export default LoginScreen;
+export default Alumno;

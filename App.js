@@ -13,10 +13,12 @@ import Historial from './src/screens/Historial';
 import Config from './src/screens/Config';
 import Register from './src/screens/Register';
 import Login from './src/screens/Login';
+import RoleSelectionScreen from './src/screens/RoleSelectionScreen'; // Nueva pantalla para seleccionar rol
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+// Pantalla principal con el Tab Navigator
 const MainTab = () => {
   return (
     <Tab.Navigator initialRouteName="Inicio"
@@ -58,7 +60,10 @@ const App = () => {
           <Box safeAreaTop bg={useColorModeValue('light.background.100', 'dark.background.900')}>
             <ToggleDarkMode />
           </Box>
-          <Stack.Navigator initialRouteName={isAuthenticated ? "MainTab" : "Login"}>
+          <Stack.Navigator initialRouteName={isAuthenticated ? "MainTab" : "RoleSelectionScreen"}>
+            {/* Nueva pantalla de selección de rol antes de Login */}
+            <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} options={{ headerShown: false }} />
+
             <Stack.Screen name="Login" options={{ headerShown: false }}>
               {() => <Login setIsAuthenticated={setIsAuthenticated} />}
             </Stack.Screen>
