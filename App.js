@@ -14,6 +14,9 @@ import Config from './src/screens/Config';
 import Register from './src/screens/Register';
 import Login from './src/screens/Login';
 import RoleSelectionScreen from './src/screens/RoleSelectionScreen'; // Nueva pantalla para seleccionar rol
+import PasedeLista from './src/screens/PasedeLista'; // Asegúrate de que esta ruta es correcta
+import Grupos from './src/screens/Grupos'; // Importa la pantalla de Grupos
+import GruposProfesor from './src/screens/GruposProfesor'; // Importa la pantalla de GruposProfesor
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -62,14 +65,22 @@ const App = () => {
           </Box>
           <Stack.Navigator initialRouteName={isAuthenticated ? "MainTab" : "RoleSelectionScreen"}>
             {/* Nueva pantalla de selección de rol antes de Login */}
-            <Stack.Screen name="RoleSelection" component={RoleSelectionScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerShown: false }} />
 
             <Stack.Screen name="Login" options={{ headerShown: false }}>
               {() => <Login setIsAuthenticated={setIsAuthenticated} />}
             </Stack.Screen>
+
             <Stack.Screen name="Register" options={{ headerShown: false }}>
               {() => <Register setIsAuthenticated={setIsAuthenticated} />}
             </Stack.Screen>
+
+            {/* Pantallas adicionales */}
+            <Stack.Screen name="PasedeLista" component={PasedeLista} options={{ headerShown: false }} />
+            <Stack.Screen name="Grupos" component={Grupos} options={{ headerShown: false }} />
+            <Stack.Screen name="GruposProfesor" component={GruposProfesor} options={{ headerShown: false }} />
+
+            {/* Pantalla principal con tabs */}
             <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
           </Stack.Navigator>
         </VStack>
