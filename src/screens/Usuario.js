@@ -1,43 +1,37 @@
-// Card
 import React from 'react';
-import { FlatList, Box, Text } from 'native-base';
-import { Swipeable } from 'react-native-gesture-handler';
+import { NativeBaseProvider, Box, Center, VStack, Avatar, Text, Divider } from 'native-base';
 
-const recipes = [
-  { id: '1', title: 'Grupo 1', description: 'Rico en sabor y fácil de preparar.' },
-  { id: '2', title: 'Grupo 2', description: 'Refrescante y perfecta para el verano.' },
-  { id: '3', title: 'Grupo 3', description: 'Tradicionales y llenos de sabor.' },
-];
+const Usuario = ({ route }) => {
+    // Obtenemos los datos de route.params, con valores por defecto en caso de que no existan
+    const { userInfo } = route.params || { userInfo: {} };
 
-const Usuario = () => {
-  const renderRightActions = () => (
-    <Box
-      bg="red.500"
-      justifyContent="center"
-      alignItems="flex-end"
-      px="5"
-      height="100%"
-    >
-      <Text color="white" fontSize="md">
-        Eliminar
-      </Text>
-    </Box>
-  );
+    return (
+        <NativeBaseProvider>
+            <Box flex={1} bg="white" p="5">
+                <Center>
+                    {/* Imagen de perfil */}
+                    <Avatar size="2xl" source={{ uri: userInfo.imageUri || 'https://via.placeholder.com/150' }} mb="5" />
+                    <Text fontSize="xl" fontWeight="bold">
+                        {userInfo.fullName || 'Usuario'}
+                    </Text>
+                </Center>
 
-  return (
-    <FlatList
-      data={recipes}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <Swipeable renderRightActions={renderRightActions}>
-          <Box bg="black" px="4" py="3" borderBottomWidth="1" borderColor="coolGray.200">
-            <Text fontSize="lg">{item.title}</Text>
-          </Box>
-        </Swipeable>
-      )}
-      contentContainerStyle={{ paddingBottom: 16 }}
-    />
-  );
+                <Divider my="4" />
+
+                {/* Información básica */}
+                <VStack space={3}>
+                    <Text fontSize="md">
+                        <Text fontWeight="bold">Número de Control: </Text>
+                        {userInfo.controlNumber || 'No disponible'}
+                    </Text>
+                    <Text fontSize="md">
+                        <Text fontWeight="bold">Correo Electrónico: </Text>
+                        {userInfo.email || 'No disponible'}
+                    </Text>
+                </VStack>
+            </Box>
+        </NativeBaseProvider>
+    );
 };
 
 export default Usuario;

@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
-import { NativeBaseProvider, Box, Center, VStack, FormControl, Input, Button, Avatar, HStack, Icon, Text, ScrollView, Stack, ZStack, Divider } from 'native-base';
+import { NativeBaseProvider, Box, Center, VStack, FormControl, Input, Button, Avatar, HStack, Icon, Text, ScrollView, ZStack, Divider } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker'; // Importamos ImagePicker
+import * as ImagePicker from 'expo-image-picker';
 
-const Config = () => {
-    const [imageUri, setImageUri] = useState('https://via.placeholder.com/150'); // URI de la imagen de perfil
+const Config = ({ navigation }) => {
+    
+    const [userInfo, setUserInfo] = useState({
+        imageUri: 'https://via.placeholder.com/150',
+        fullName: '',
+        controlNumber: '',
+        email: '',
+        newPassword: '',
+    });
+
+    // Manejar cambios en los inputs
+    const handleInputChange = (field, value) => {
+        setUserInfo({ ...userInfo, [field]: value });
+    };
 
     // Función para seleccionar una nueva imagen
     const handleImagePick = async () => {
-        // Solicitar permisos para acceder a la galería
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert('Permission to access camera roll is required!');
+        if (!permissionResult.granted) {
+            alert('Se requiere permiso para acceder a la galería.');
             return;
         }
 
-        // Abrir el selector de imágenes
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
@@ -24,28 +34,37 @@ const Config = () => {
         });
 
         if (!pickerResult.cancelled) {
-            setImageUri(pickerResult.uri); // Actualizamos la URI con la imagen seleccionada
-        } else {
-            console.log('No image selected');
+            setUserInfo({ ...userInfo, imageUri: pickerResult.uri });
         }
     };
 
+    // Función para guardar cambios y navegar a la pantalla de usuario
+    const saveChanges = () => {
+        if (navigation && navigation.navigate) {
+            navigation.navigate('Usuario', { userInfo }); // Pasamos el objeto userInfo como parámetro
+        } else {
+            alert('No se pudo navegar a la pantalla de Usuario');
+        }
+    };
+    
     return (
         <NativeBaseProvider>
             <ScrollView flex={1} bg="white">
                 {/* Barra de navegación */}
                 <HStack bg="green.600" px="4" py="3" alignItems="center">
                     <Box flex={1} alignItems="center">
-                        <Text color="white" fontSize="lg" fontWeight="bold">Configuración</Text>
+                        <Text color="white" fontSize="lg" fontWeight="bold">
+                            Configuración
+                        </Text>
                     </Box>
                 </HStack>
 
                 {/* Sección de Imagen de Perfil */}
-                <Center mt="65">
+                <Center mt="6">
                     <ZStack alignItems="center" justifyContent="center">
                         <Avatar
-                            size="2xl" // Cambio de tamaño a 2xl para que sea más grande
-                            source={{ uri: imageUri }} // Usamos la URI actual de la imagen
+                            size="2xl"
+                            source={{ uri: userInfo.imageUri }}
                             mb="5"
                         />
                         <Icon
@@ -56,10 +75,10 @@ const Config = () => {
                             position="absolute"
                             bottom="0"
                             right="center"
-                            onPress={handleImagePick} // Llamamos a la función cuando se presiona el ícono
+                            onPress={handleImagePick}
                         />
                     </ZStack>
-                    <Text mt="65" color="gray.500" onPress={handleImagePick}>
+                    <Text mt="2" color="gray.500" onPress={handleImagePick}>
                         Cambiar foto de perfil
                     </Text>
                 </Center>
@@ -67,65 +86,51 @@ const Config = () => {
                 <VStack space={4} px="7" mt="10">
                     {/* Información básica del usuario */}
                     <Box bg="gray.100" p="4" borderRadius="md">
-                        <Text fontSize="lg" color="gray.700" fontWeight="bold" mb="2">Información Básica</Text>
-                        <Stack space={3}>
+                        <Text fontSize="lg" color="gray.700" fontWeight="bold" mb="2">
+                            Información Básica
+                        </Text>
+                        <VStack space={3}>
                             <FormControl>
                                 <FormControl.Label>Nombre Completo</FormControl.Label>
-                                <Input placeholder="Juan Alvarez" />
+                                <Input
+                                    placeholder="Juan Alvarez"
+                                    value={userInfo.fullName}
+                                    onChangeText={(text) => handleInputChange('fullName', text)}
+                                />
                             </FormControl>
                             <FormControl>
                                 <FormControl.Label>Número de Control</FormControl.Label>
-                                <Input placeholder="19150360" />
+                                <Input
+                                    placeholder="19150360"
+                                    value={userInfo.controlNumber}
+                                    onChangeText={(text) => handleInputChange('controlNumber', text)}
+                                />
                             </FormControl>
                             <FormControl>
                                 <FormControl.Label>Correo Electrónico</FormControl.Label>
-                                <Input placeholder="jondoe@example.com" />
+                                <Input
+                                    placeholder="jondoe@example.com"
+                                    value={userInfo.email}
+                                    onChangeText={(text) => handleInputChange('email', text)}
+                                />
                             </FormControl>
                             <FormControl>
                                 <FormControl.Label>Contraseña Nueva</FormControl.Label>
-                                <Input placeholder="Ingresar Contraseña Nueva" secureTextEntry={true} />
+                                <Input
+                                    placeholder="Ingresar Contraseña Nueva"
+                                    secureTextEntry
+                                    value={userInfo.newPassword}
+                                    onChangeText={(text) => handleInputChange('newPassword', text)}
+                                />
                             </FormControl>
-                        </Stack>
-                    </Box>
-
-                    <Divider my="4" />
-
-                    {/* Dirección del usuario */}
-                    <Box bg="gray.100" p="4" borderRadius="md">
-                        <Text fontSize="lg" color="gray.700" fontWeight="bold" mb="2">Dirección</Text>
-                        <Stack space={3}>
-                            <FormControl>
-                                <FormControl.Label>Dirección</FormControl.Label>
-                                <Input placeholder="103, Jardines de Triana" />
-                            </FormControl>
-                            <HStack space={2}>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>Ciudad</FormControl.Label>
-                                    <Input placeholder="Ags" />
-                                </FormControl>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>Estado</FormControl.Label>
-                                    <Input placeholder="Aguascalientes" />
-                                </FormControl>
-                            </HStack>
-                            <HStack space={2}>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>Código Postal</FormControl.Label>
-                                    <Input placeholder="11357" />
-                                </FormControl>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>País</FormControl.Label>
-                                    <Input placeholder="México" />
-                                </FormControl>
-                            </HStack>
-                        </Stack>
+                        </VStack>
                     </Box>
 
                     <Divider my="4" />
 
                     {/* Botón de Guardar */}
-                    <Center mt="0">
-                        <Button colorScheme="green" size="lg" borderRadius="md" width="90%">
+                    <Center>
+                        <Button colorScheme="green" size="lg" borderRadius="md" width="90%" onPress={saveChanges}>
                             Guardar Cambios
                         </Button>
                     </Center>
