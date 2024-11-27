@@ -1,9 +1,15 @@
 import React from 'react';
-import { NativeBaseProvider, Box, Center, VStack, Avatar, Text, Divider } from 'native-base';
+import { NativeBaseProvider, Box, Center, VStack, Avatar, Text, Divider, Button } from 'native-base';
 
-const Usuario = ({ route }) => {
+const Usuario = ({ route, navigation }) => {
     // Obtenemos los datos de route.params, con valores por defecto en caso de que no existan
     const { userInfo } = route.params || { userInfo: {} };
+
+    // Función para manejar el cierre de sesión
+    const handleLogout = () => {
+        // Navegar a la pantalla de Login
+        navigation.navigate('RoleSelectionScreen');
+    };
 
     return (
         <NativeBaseProvider>
@@ -19,7 +25,11 @@ const Usuario = ({ route }) => {
                 <Divider my="4" />
 
                 {/* Información básica */}
-                <VStack space={3}>
+                <VStack space={3} mb="5">
+                <Text fontSize="md">
+                        <Text fontWeight="bold">Nombre Completo: </Text>
+                        {userInfo.email || 'No disponible'}
+                    </Text>
                     <Text fontSize="md">
                         <Text fontWeight="bold">Número de Control: </Text>
                         {userInfo.controlNumber || 'No disponible'}
@@ -28,7 +38,16 @@ const Usuario = ({ route }) => {
                         <Text fontWeight="bold">Correo Electrónico: </Text>
                         {userInfo.email || 'No disponible'}
                     </Text>
+                    <Text fontSize="md">
+                        <Text fontWeight="bold">Turno: </Text>
+                        {userInfo.email || 'No disponible'}
+                    </Text>
                 </VStack>
+
+                {/* Botón de Cerrar Sesión */}
+                <Button colorScheme="red" onPress={handleLogout}>
+                    Cerrar Sesión
+                </Button>
             </Box>
         </NativeBaseProvider>
     );
