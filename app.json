@@ -1,5 +1,6 @@
 {
-  "expo": {
+  "expo": { 
+    "newArchEnabled": false,
     "name": "tres",
     "slug": "tres",
     "version": "1.0.0",
@@ -10,9 +11,11 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "white"
+      
     },
     "ios": {
       "supportsTablet": true
+      
     },
     "android": {
       "adaptiveIcon": {

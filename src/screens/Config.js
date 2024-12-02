@@ -1,138 +1,176 @@
 import React, { useState } from 'react';
-import { NativeBaseProvider, Box, Center, VStack, FormControl, Input, Button, Avatar, HStack, Icon, Text, ScrollView, Stack, ZStack, Divider } from 'native-base';
+import {
+  NativeBaseProvider,
+  Box,
+  Center,
+  VStack,
+  FormControl,
+  Input,
+  Button,
+  Avatar,
+  HStack,
+  Icon,
+  Text,
+  ScrollView,
+  Divider
+} from 'native-base';
+import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker'; // Importamos ImagePicker
+import { TouchableOpacity } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
-const Config = () => {
-    const [imageUri, setImageUri] = useState('https://via.placeholder.com/150'); // URI de la imagen de perfil
+const Config = ({ navigation }) => {
+  const [userInfo, setUserInfo] = useState({
+    imageUri: 'https://via.placeholder.com/150',
+    fullName: '',
+    controlNumber: '',
+    email: '',
+    turno: '',
+    newPassword: '',
+  });
 
-    // Función para seleccionar una nueva imagen
-    const handleImagePick = async () => {
-        // Solicitar permisos para acceder a la galería
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert('Permission to access camera roll is required!');
-            return;
-        }
+  // Manejar cambios en los inputs
+  const handleInputChange = (field, value) => {
+    setUserInfo({ ...userInfo, [field]: value });
+  };
 
-        // Abrir el selector de imágenes
-        const pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
+  // Función para seleccionar una nueva imagen
+  const handleImagePick = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert('Se requiere permiso para acceder a la galería.');
+      return;
+    }
 
-        if (!pickerResult.cancelled) {
-            setImageUri(pickerResult.uri); // Actualizamos la URI con la imagen seleccionada
-        } else {
-            console.log('No image selected');
-        }
-    };
+    const pickerResult = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
 
-    return (
-        <NativeBaseProvider>
-            <ScrollView flex={1} bg="white">
-                {/* Barra de navegación */}
-                <HStack bg="green.600" px="4" py="3" alignItems="center">
-                    <Box flex={1} alignItems="center">
-                        <Text color="white" fontSize="lg" fontWeight="bold">Configuración</Text>
-                    </Box>
-                </HStack>
+    if (!pickerResult.canceled) {
+      setUserInfo({ ...userInfo, imageUri: pickerResult.uri });
+    }
+  };
 
-                {/* Sección de Imagen de Perfil */}
-                <Center mt="65">
-                    <ZStack alignItems="center" justifyContent="center">
-                        <Avatar
-                            size="2xl" // Cambio de tamaño a 2xl para que sea más grande
-                            source={{ uri: imageUri }} // Usamos la URI actual de la imagen
-                            mb="5"
-                        />
-                        <Icon
-                            as={Ionicons}
-                            name="camera"
-                            size="sm"
-                            color="gray.500"
-                            position="absolute"
-                            bottom="0"
-                            right="center"
-                            onPress={handleImagePick} // Llamamos a la función cuando se presiona el ícono
-                        />
-                    </ZStack>
-                    <Text mt="65" color="gray.500" onPress={handleImagePick}>
-                        Cambiar foto de perfil
-                    </Text>
-                </Center>
+  // Función para guardar cambios y navegar a la pantalla de usuario
+  const saveChanges = () => {
+    if (userInfo.fullName && userInfo.email) {
+      navigation.navigate('Usuario', { userInfo });
+    } else {
+      alert('Por favor, completa todos los campos obligatorios.');
+    }
+  };
 
-                <VStack space={4} px="7" mt="10">
-                    {/* Información básica del usuario */}
-                    <Box bg="gray.100" p="4" borderRadius="md">
-                        <Text fontSize="lg" color="gray.700" fontWeight="bold" mb="2">Información Básica</Text>
-                        <Stack space={3}>
-                            <FormControl>
-                                <FormControl.Label>Nombre Completo</FormControl.Label>
-                                <Input placeholder="Juan Alvarez" />
-                            </FormControl>
-                            <FormControl>
-                                <FormControl.Label>Número de Control</FormControl.Label>
-                                <Input placeholder="19150360" />
-                            </FormControl>
-                            <FormControl>
-                                <FormControl.Label>Correo Electrónico</FormControl.Label>
-                                <Input placeholder="jondoe@example.com" />
-                            </FormControl>
-                            <FormControl>
-                                <FormControl.Label>Contraseña Nueva</FormControl.Label>
-                                <Input placeholder="Ingresar Contraseña Nueva" secureTextEntry={true} />
-                            </FormControl>
-                        </Stack>
-                    </Box>
+  return (
+    <NativeBaseProvider>
+      {/* Contenedor principal que usa KeyboardAvoidingView */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        {/* Tocar fuera de los campos para cerrar el teclado */}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView flex={1} bg="gray.50" contentContainerStyle={{ flexGrow: 1 }}>
+            {/* Barra de navegación */}
+            <HStack bg="green.600" px="4" py="3" alignItems="center" justifyContent="center">
+              <Text color="white" fontSize="lg" fontWeight="bold">
+                Configuración
+              </Text>
+            </HStack>
 
-                    <Divider my="4" />
+            {/* Sección de Imagen de Perfil */}
+            <Center mt="6">
+              <Avatar
+                size="2xl"
+                source={{ uri: userInfo.imageUri }}
+                mb="5"
+              />
+              <TouchableOpacity onPress={handleImagePick} style={{ position: 'absolute', bottom: 0, right: 100 }}>
+                <Icon
+                  as={Ionicons}
+                  name="camera"
+                  size="lg"
+                  color="gray.500"
+                />
+              </TouchableOpacity>
+              <Text mt="3" color="gray.500" onPress={handleImagePick}>
+                Cambiar foto de perfil
+              </Text>
+            </Center>
 
-                    {/* Dirección del usuario */}
-                    <Box bg="gray.100" p="4" borderRadius="md">
-                        <Text fontSize="lg" color="gray.700" fontWeight="bold" mb="2">Dirección</Text>
-                        <Stack space={3}>
-                            <FormControl>
-                                <FormControl.Label>Dirección</FormControl.Label>
-                                <Input placeholder="103, Jardines de Triana" />
-                            </FormControl>
-                            <HStack space={2}>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>Ciudad</FormControl.Label>
-                                    <Input placeholder="Ags" />
-                                </FormControl>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>Estado</FormControl.Label>
-                                    <Input placeholder="Aguascalientes" />
-                                </FormControl>
-                            </HStack>
-                            <HStack space={2}>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>Código Postal</FormControl.Label>
-                                    <Input placeholder="11357" />
-                                </FormControl>
-                                <FormControl flex={1}>
-                                    <FormControl.Label>País</FormControl.Label>
-                                    <Input placeholder="México" />
-                                </FormControl>
-                            </HStack>
-                        </Stack>
-                    </Box>
-
-                    <Divider my="4" />
-
-                    {/* Botón de Guardar */}
-                    <Center mt="0">
-                        <Button colorScheme="green" size="lg" borderRadius="md" width="90%">
-                            Guardar Cambios
-                        </Button>
-                    </Center>
+            <VStack space={4} px="7" mt="6">
+              {/* Información básica del usuario */}
+              <Box bg="white" p="4" borderRadius="md" shadow="2">
+                <Text fontSize="lg" color="gray.700" fontWeight="bold" mb="2">
+                  Información Básica
+                </Text>
+                <VStack space={3}>
+                  <FormControl isRequired>
+                    <FormControl.Label>Nombre Completo</FormControl.Label>
+                    <Input
+                      placeholder="Juan Alvarez"
+                      value={userInfo.fullName}
+                      onChangeText={(text) => handleInputChange('fullName', text)}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormControl.Label>Número de Control</FormControl.Label>
+                    <Input
+                      placeholder="19150360"
+                      value={userInfo.controlNumber}
+                      onChangeText={(text) => handleInputChange('controlNumber', text)}
+                    />
+                  </FormControl>
+                  <FormControl isRequired>
+                    <FormControl.Label>Correo Electrónico</FormControl.Label>
+                    <Input
+                      placeholder="jondoe@example.com"
+                      value={userInfo.email}
+                      onChangeText={(text) => handleInputChange('email', text)}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormControl.Label>Turno</FormControl.Label>
+                    <Input
+                      placeholder="Matutino o Vespertino"
+                      value={userInfo.turno}
+                      onChangeText={(text) => handleInputChange('turno', text)}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormControl.Label>Contraseña Nueva</FormControl.Label>
+                    <Input
+                      placeholder="Ingresar Contraseña Nueva"
+                      secureTextEntry
+                      value={userInfo.newPassword}
+                      onChangeText={(text) => handleInputChange('newPassword', text)}
+                    />
+                  </FormControl>
                 </VStack>
-            </ScrollView>
-        </NativeBaseProvider>
-    );
+              </Box>
+
+              <Divider my="4" />
+
+              {/* Botón de Guardar */}
+              <Center>
+                <Button
+                  colorScheme="green"
+                  size="lg"
+                  borderRadius="md"
+                  width="90%"
+                  onPress={saveChanges}
+                >
+                  Guardar Cambios
+                </Button>
+              </Center>
+            </VStack>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </NativeBaseProvider>
+  );
 };
 
 export default Config;
