@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Button, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 
 const HistorialScreen = () => {
@@ -20,21 +20,38 @@ const HistorialScreen = () => {
         cargarHistorial();
     }, []);
 
+    // Función para limpiar el historial
+    const limpiarHistorial = async () => {
+        try {
+            await AsyncStorage.removeItem('historial'); // Elimina la clave 'historial' en AsyncStorage
+            setHistorial([]); // Vacía el estado local
+            Alert.alert('Historial limpio', 'El historial de registros ha sido eliminado correctamente.');
+        } catch (error) {
+            console.error('Error al limpiar el historial:', error);
+            Alert.alert('Error', 'No se pudo limpiar el historial.');
+        }
+    };
+
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <Text style={styles.title}>Historial de Registros</Text>
             {historial.length === 0 ? (
                 <Text>No hay registros disponibles.</Text>
             ) : (
-                historial.map((sesion, index) => (
-                    <View key={index} style={styles.sesion}>
-                        <Text style={styles.sesionText}>
-                            {sesion.email} - {sesion.fecha}
-                        </Text>
-                    </View>
-                ))
+                <ScrollView>
+                    {historial.map((sesion, index) => (
+                        <View key={index} style={styles.sesion}>
+                            <Text style={styles.sesionText}>
+                                {sesion.email} - {sesion.fecha}
+                            </Text>
+                        </View>
+                    ))}
+                </ScrollView>
             )}
-        </ScrollView>
+            <View style={styles.buttonContainer}>
+                <Button title="Limpiar Historial" onPress={limpiarHistorial} color="#d9534f" />
+            </View>
+        </View>
     );
 };
 
@@ -56,6 +73,9 @@ const styles = StyleSheet.create({
     },
     sesionText: {
         fontSize: 16,
+    },
+    buttonContainer: {
+        marginTop: 20,
     },
 });
 

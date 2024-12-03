@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg'; // Instalar con: npm install react-native-qrcode-svg
 import Icon from 'react-native-vector-icons/Ionicons'; // Instalar con: npm install react-native-vector-icons
@@ -62,6 +62,25 @@ const GruposProfesor = () => {
         navigation.navigate('PasedeListaS', { qrData: qrContent, materia: materia.nombre });
     };
 
+    // Elimina una materia específica
+    const eliminarMateria = (id) => {
+        Alert.alert(
+            'Confirmar Eliminación',
+            '¿Estás seguro de que deseas eliminar esta materia?',
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                {
+                    text: 'Eliminar',
+                    onPress: async () => {
+                        const materiasActualizadas = materias.filter((materia) => materia.id !== id);
+                        setMaterias(materiasActualizadas);
+                        guardarMaterias(materiasActualizadas); // Guardar cambios en AsyncStorage
+                    },
+                },
+            ]
+        );
+    };
+
     return (
         <View style={styles.container}>
             {/* Botón de navegación */}
@@ -90,12 +109,20 @@ const GruposProfesor = () => {
             {materias.map((materia) => (
                 <View key={materia.id} style={styles.materiaRow}>
                     <Text style={styles.materiaItem}>{materia.nombre}</Text>
-                    <TouchableOpacity
-                        style={styles.selectButton}
-                        onPress={() => generarQR(materia)} // Genera QR y navega
-                    >
-                        <Text style={styles.selectButtonText}>Generar QR</Text>
-                    </TouchableOpacity>
+                    <View style={styles.actionsContainer}>
+                        <TouchableOpacity
+                            style={styles.selectButton}
+                            onPress={() => generarQR(materia)} // Genera QR y navega
+                        >
+                            <Text style={styles.selectButtonText}>Generar QR</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={styles.deleteButton}
+                            onPress={() => eliminarMateria(materia.id)} // Elimina la materia
+                        >
+                            <Text style={styles.deleteButtonText}>Eliminar</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             ))}
 
@@ -159,13 +186,27 @@ const styles = StyleSheet.create({
     materiaItem: {
         fontSize: 16,
     },
+    actionsContainer: {
+        flexDirection: 'row',
+    },
     selectButton: {
         backgroundColor: '#007bff',
         paddingVertical: 5,
         paddingHorizontal: 10,
         borderRadius: 5,
+        marginRight: 5,
     },
     selectButtonText: {
+        color: '#fff',
+        fontSize: 14,
+    },
+    deleteButton: {
+        backgroundColor: '#d9534f',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+    },
+    deleteButtonText: {
         color: '#fff',
         fontSize: 14,
     },
