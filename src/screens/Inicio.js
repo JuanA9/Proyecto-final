@@ -44,23 +44,6 @@ const Inicio = () => {
 
         <Box width="100%" alignItems="center">
           <Button
-            onPress={() => navigation.navigate('Grupos')}  // Redirige a Grupos
-            size="lg"
-            colorScheme="green"
-            width="90%"
-            height={50}
-            borderRadius="0"  // Hacer el botón cuadrado
-            bg={buttonBgColor}
-            _hover={{ bg: buttonHoverColor }}
-            _text={{ color: buttonTextColor, fontWeight: 'bold' }}
-            shadow={3}
-          >
-            Grupos
-          </Button>
-        </Box>
-
-        <Box width="100%" alignItems="center">
-          <Button
             onPress={() => navigation.navigate('GruposProfesor')}  // Redirige a GruposProfesor
             size="lg"
             colorScheme="green"

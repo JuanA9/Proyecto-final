@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, Text, Button, View, Link} from 'native-base';
+import { Button, Text, View } from 'native-base';
 import { Camera, CameraView } from "expo-camera";
+import { useNavigation } from '@react-navigation/native';
 
 const Scanner = () => {
-
+  const navigation = useNavigation();  // Hook de navegación
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
@@ -18,18 +19,21 @@ const Scanner = () => {
 
   const handleBarcodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    alert(`Código QR escaneado con tipo ${type} y datos ${data}`);
+
+    // Redirigir a la pantalla "PaseDeLista" pasando el data del QR
+    navigation.navigate('PaseDeListaScreen', { groupId: data });
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <Text>Solicitando permiso para la cámara...</Text>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text>No se tiene acceso a la cámara</Text>;
   }
 
   return (
-<View
+    <View
       style={{
         flex: 1,
         justifyContent: 'center',
@@ -52,14 +56,14 @@ const Scanner = () => {
       />
       {scanned && (
         <Button
-          title="Tap to Scan Again"
           onPress={() => setScanned(false)}
           color="#007BFF"
-        />
+        >
+          Volver a escanear
+        </Button>
       )}
     </View>
   );
-}
-
+};
 
 export default Scanner;

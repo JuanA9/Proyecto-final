@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg'; // Instalar con: npm install react-native-qrcode-svg
 import Icon from 'react-native-vector-icons/Ionicons'; // Instalar con: npm install react-native-vector-icons
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 
 const GruposProfesor = () => {
     const navigation = useNavigation(); // Hook de navegación
     const [materias, setMaterias] = useState([]); // Lista de materias
     const [nombreMateria, setNombreMateria] = useState(''); // Input para nueva materia
     const [qrData, setQrData] = useState(''); // Código QR generado para la materia
+
+    // Cargar las materias guardadas desde AsyncStorage al iniciar
+    useEffect(() => {
+        const cargarMaterias = async () => {
+            try {
+                const materiasGuardadas = await AsyncStorage.getItem('materias');
+                if (materiasGuardadas) {
+                    setMaterias(JSON.parse(materiasGuardadas));
+                }
+            } catch (error) {
+                console.error('Error al cargar las materias:', error);
+            }
+        };
+        cargarMaterias();
+    }, []);
+
+    // Guardar las materias en AsyncStorage
+    const guardarMaterias = async (materiasActualizadas) => {
+        try {
+            await AsyncStorage.setItem('materias', JSON.stringify(materiasActualizadas));
+        } catch (error) {
+            console.error('Error al guardar las materias:', error);
+        }
+    };
 
     // Maneja el registro de una nueva materia
     const agregarMateria = () => {
@@ -22,14 +47,19 @@ const GruposProfesor = () => {
             nombre: nombreMateria,
         };
 
-        setMaterias([...materias, nuevaMateria]);
+        const materiasActualizadas = [...materias, nuevaMateria];
+        setMaterias(materiasActualizadas);
+        guardarMaterias(materiasActualizadas); // Guardar en AsyncStorage
         setNombreMateria('');
     };
 
-    // Genera el código QR para una materia seleccionada
+    // Genera el código QR para una materia seleccionada y redirige automáticamente
     const generarQR = (materia) => {
         const qrContent = `grupo-${materia.id}`; // Identificador único del grupo
         setQrData(qrContent);
+
+        // Redirigir a la pantalla "PaseDeListaScreen" pasando el QR como parámetro
+        navigation.navigate('PasedeListaS', { qrData: qrContent, materia: materia.nombre });
     };
 
     return (
@@ -62,14 +92,14 @@ const GruposProfesor = () => {
                     <Text style={styles.materiaItem}>{materia.nombre}</Text>
                     <TouchableOpacity
                         style={styles.selectButton}
-                        onPress={() => generarQR(materia)}
+                        onPress={() => generarQR(materia)} // Genera QR y navega
                     >
                         <Text style={styles.selectButtonText}>Generar QR</Text>
                     </TouchableOpacity>
                 </View>
             ))}
 
-            {/* Mostrar el código QR generado */}
+            {/* Mostrar el código QR generado (solo si no redirige automáticamente) */}
             {qrData && (
                 <View style={styles.qrContainer}>
                     <Text style={styles.qrTitle}>Código QR para el Grupo</Text>

@@ -74,6 +74,7 @@ const App = () => {
             <Stack.Screen name="Register" options={{ headerShown: false }}>
               {() => <Register setIsAuthenticated={setIsAuthenticated} />}
             </Stack.Screen>
+            
 
             {/* Pantallas adicionales */}
             <Stack.Screen name="PasedeLista" component={PasedeLista} options={{ headerShown: false }} />
@@ -82,6 +83,7 @@ const App = () => {
 
             {/* Pantalla principal con tabs */}
             <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
+            
           </Stack.Navigator>
         </VStack>
       </NavigationContainer>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, Image } from 'react-native';
 import { NativeBaseProvider, Box, Heading, VStack, FormControl, HStack, Input, Button, Link, Center, useColorModeValue, useBreakpointValue } from "native-base";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 
 const LoginScreen = ({ setIsAuthenticated }) => {
     const [email, setEmail] = useState('');
@@ -14,10 +15,24 @@ const LoginScreen = ({ setIsAuthenticated }) => {
 
     const flexDir = useBreakpointValue({ base: 'column', lg: 'row' });
 
-    const handleLogin = () => {
+    // Maneja el inicio de sesión y guarda el historial
+    const handleLogin = async () => {
         if (email && password) { 
             setIsAuthenticated(true);
-            navigation.navigate('MainTab'); 
+
+            // Guardar el inicio de sesión en el historial
+            try {
+                const historial = await AsyncStorage.getItem('historial');
+                const historialParseado = historial ? JSON.parse(historial) : [];
+                const nuevaSesion = { email, fecha: new Date().toLocaleString() };
+                historialParseado.push(nuevaSesion);
+
+                await AsyncStorage.setItem('historial', JSON.stringify(historialParseado));
+            } catch (error) {
+                console.error('Error al guardar el historial:', error);
+            }
+
+            navigation.navigate('MainTab');  // Navega a la pantalla principal después de iniciar sesión
         } else {
             alert('Please enter your credentials'); 
         }

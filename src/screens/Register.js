@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, Image } from 'react-native';
 import { NativeBaseProvider, Box, Heading, VStack, FormControl, HStack, Input, Button, Center, useColorModeValue, useBreakpointValue } from "native-base";
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 
 const RegisterScreen = ({ setIsAuthenticated }) => {
     const [email, setEmail] = useState('');
@@ -14,12 +15,30 @@ const RegisterScreen = ({ setIsAuthenticated }) => {
 
     const flexDir = useBreakpointValue({ base: 'column', lg: 'row' });
 
-    const handleRegister = () => {
+    // Maneja el registro de usuario y lo guarda en AsyncStorage
+    const handleRegister = async () => {
         if (password === confirmPassword) {
-            setIsAuthenticated(true); 
-            navigation.navigate('MainTab'); 
+            try {
+                // Crear un objeto de sesión para guardar
+                const nuevaSesion = { email, fecha: new Date().toLocaleString() };
+
+                // Obtener el historial actual de usuarios desde AsyncStorage
+                const historialGuardado = await AsyncStorage.getItem('historial');
+                const historial = historialGuardado ? JSON.parse(historialGuardado) : [];
+
+                // Agregar el nuevo registro al historial
+                historial.push(nuevaSesion);
+
+                // Guardar el historial actualizado
+                await AsyncStorage.setItem('historial', JSON.stringify(historial));
+
+                setIsAuthenticated(true); // Cambiar estado de autenticación
+                navigation.navigate('MainTab'); // Navegar al tab principal
+            } catch (error) {
+                console.error('Error al registrar el usuario:', error);
+            }
         } else {
-            alert('Passwords do not match'); 
+            alert('Passwords do not match');
         }
     };
 
@@ -54,7 +73,7 @@ const RegisterScreen = ({ setIsAuthenticated }) => {
                         Register
                     </Button>
                     <HStack mt="6" justifyContent="center">
-                        <Text fontSize="sm" ccolor={textColor}>
+                        <Text fontSize="sm" color={textColor}>
                             Already have an account? 
                             <Button variant="link" colorScheme="green" onPress={() => navigation.navigate('Login')}>
                                 Login
