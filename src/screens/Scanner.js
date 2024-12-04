@@ -22,7 +22,7 @@ const Scanner = () => {
     alert(`Código QR escaneado con tipo ${type} y datos ${data}`);
 
     // Redirigir a la pantalla "PaseDeLista" pasando el data del QR
-    navigation.navigate('PaseDeListaScreen', { groupId: data });
+    navigation.navigate('PasedeLista', { groupId: data });
   };
 
   if (hasPermission === null) {

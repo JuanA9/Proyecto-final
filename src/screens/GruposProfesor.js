@@ -41,26 +41,31 @@ const GruposProfesor = () => {
             alert('Por favor ingresa el nombre de la materia.');
             return;
         }
-
+    
         const nuevaMateria = {
             id: Date.now().toString(), // ID único para la materia
             nombre: nombreMateria,
         };
-
+    
         const materiasActualizadas = [...materias, nuevaMateria];
         setMaterias(materiasActualizadas);
         guardarMaterias(materiasActualizadas); // Guardar en AsyncStorage
         setNombreMateria('');
+    
+        // Genera el QR y redirige a "PaseDeListaScreen"
+        generarQR(nuevaMateria);
     };
+    
 
     // Genera el código QR para una materia seleccionada y redirige automáticamente
-    const generarQR = (materia) => {
-        const qrContent = `grupo-${materia.id}`; // Identificador único del grupo
-        setQrData(qrContent);
+  // Genera el código QR para una materia seleccionada y redirige automáticamente
+const generarQR = (materia) => {
+    const qrContent = `grupo-${materia.id}`; // Identificador único del grupo
+    setQrData(qrContent);
 
-        // Redirigir a la pantalla "PaseDeListaScreen" pasando el QR como parámetro
-        navigation.navigate('PasedeListaS', { qrData: qrContent, materia: materia.nombre });
-    };
+    // Redirigir a la pantalla "PaseDeListaScreen" pasando el QR como parámetro
+    navigation.navigate('PaseDeLista', { qrData: qrContent, materia: materia.nombre });
+};
 
     // Elimina una materia específica
     const eliminarMateria = (id) => {
@@ -88,7 +93,7 @@ const GruposProfesor = () => {
                 name="arrow-back"
                 size={30}
                 color="black"
-                onPress={() => navigation.navigate('Inicio')} // Regresa a la pantalla inicial
+                onPress={() => navigation.navigate('PasedeLista')} // Regresa a la pantalla inicial
                 style={styles.backButton}
             />
 

@@ -13,32 +13,26 @@ import Historial from './src/screens/Historial';
 import Config from './src/screens/Config';
 import Register from './src/screens/Register';
 import Login from './src/screens/Login';
-import RoleSelectionScreen from './src/screens/RoleSelectionScreen'; // Nueva pantalla para seleccionar rol
-import PasedeLista from './src/screens/PasedeLista'; // Asegúrate de que esta ruta es correcta
-import Grupos from './src/screens/Grupos'; // Importa la pantalla de Grupos
-import GruposProfesor from './src/screens/GruposProfesor'; // Importa la pantalla de GruposProfesor
+import RoleSelectionScreen from './src/screens/RoleSelectionScreen';
+import PasedeLista from './src/screens/PasedeLista';
+import Grupos from './src/screens/Grupos';
+import GruposProfesor from './src/screens/GruposProfesor';
+import { AsistenciaProvider } from './src/context/AsistenciaContext'; // Corrige la importación del proveedor del contexto
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Pantalla principal con el Tab Navigator
 const MainTab = () => {
   return (
     <Tab.Navigator initialRouteName="Inicio"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if (route.name === 'Inicio') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Scanner') {
-            iconName = focused ? 'scan' : 'scan-outline';
-          } else if (route.name === 'Usuario') {
-            iconName = focused ? 'person' : 'person-outline';
-          } else if (route.name === 'Historial') {
-            iconName = focused ? 'time' : 'time-outline';
-          } else if (route.name === 'Config') {
-            iconName = focused ? 'settings' : 'settings-outline';
-          }
+          if (route.name === 'Inicio') iconName = focused ? 'home' : 'home-outline';
+          else if (route.name === 'Scanner') iconName = focused ? 'scan' : 'scan-outline';
+          else if (route.name === 'Usuario') iconName = focused ? 'person' : 'person-outline';
+          else if (route.name === 'Historial') iconName = focused ? 'time' : 'time-outline';
+          else if (route.name === 'Config') iconName = focused ? 'settings' : 'settings-outline';
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: 'green',
@@ -51,42 +45,35 @@ const MainTab = () => {
       <Tab.Screen name="Config" component={Config} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
-}
+};
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <NativeBaseProvider theme={theme}>
-      <NavigationContainer>
-        <VStack flex={1} bg={useColorModeValue("light.background.50", "dark.background.900")}>
-          <Box safeAreaTop bg={useColorModeValue('light.background.100', 'dark.background.900')}>
-            <ToggleDarkMode />
-          </Box>
-          <Stack.Navigator initialRouteName={isAuthenticated ? "MainTab" : "RoleSelectionScreen"}>
-            {/* Nueva pantalla de selección de rol antes de Login */}
-            <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerShown: false }} />
-
-            <Stack.Screen name="Login" options={{ headerShown: false }}>
-              {() => <Login setIsAuthenticated={setIsAuthenticated} />}
-            </Stack.Screen>
-
-            <Stack.Screen name="Register" options={{ headerShown: false }}>
-              {() => <Register setIsAuthenticated={setIsAuthenticated} />}
-            </Stack.Screen>
-            
-
-            {/* Pantallas adicionales */}
-            <Stack.Screen name="PasedeLista" component={PasedeLista} options={{ headerShown: false }} />
-            <Stack.Screen name="Grupos" component={Grupos} options={{ headerShown: false }} />
-            <Stack.Screen name="GruposProfesor" component={GruposProfesor} options={{ headerShown: false }} />
-
-            {/* Pantalla principal con tabs */}
-            <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
-            
-          </Stack.Navigator>
-        </VStack>
-      </NavigationContainer>
+      <AsistenciaProvider> {/* Proveedor del contexto envuelve la navegación */}
+        <NavigationContainer>
+          <VStack flex={1} bg={useColorModeValue("light.background.50", "dark.background.900")}>
+            <Box safeAreaTop bg={useColorModeValue('light.background.100', 'dark.background.900')}>
+              <ToggleDarkMode />
+            </Box>
+            <Stack.Navigator initialRouteName={isAuthenticated ? "MainTab" : "RoleSelectionScreen"}>
+              <Stack.Screen name="RoleSelectionScreen" component={RoleSelectionScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Login" options={{ headerShown: false }}>
+                {() => <Login setIsAuthenticated={setIsAuthenticated} />}
+              </Stack.Screen>
+              <Stack.Screen name="Register" options={{ headerShown: false }}>
+                {() => <Register setIsAuthenticated={setIsAuthenticated} />}
+              </Stack.Screen>
+              <Stack.Screen name="PasedeLista" component={PasedeLista} options={{ headerShown: false }} />
+              <Stack.Screen name="Grupos" component={Grupos} options={{ headerShown: false }} />
+              <Stack.Screen name="GruposProfesor" component={GruposProfesor} options={{ headerShown: false }} />
+              <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
+            </Stack.Navigator>
+          </VStack>
+        </NavigationContainer>
+      </AsistenciaProvider>
     </NativeBaseProvider>
   );
 };
