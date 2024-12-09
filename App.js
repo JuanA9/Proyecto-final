@@ -12,11 +12,14 @@ import Usuario from './src/screens/Usuario';
 import Historial from './src/screens/Historial';
 import Config from './src/screens/Config';
 import Register from './src/screens/Register';
+import Register2 from './src/screens/RegisterAlumno';
 import Login from './src/screens/Login';
 import RoleSelectionScreen from './src/screens/RoleSelectionScreen';
 import PasedeLista from './src/screens/PasedeLista';
 import Grupos from './src/screens/Grupos';
 import GruposProfesor from './src/screens/GruposProfesor';
+import Alumno from "./src/screens/Alumno";
+import Profesor from "./src/screens/Profesor";
 import { AsistenciaProvider } from './src/context/AsistenciaContext'; // Corrige la importación del proveedor del contexto
 
 const Tab = createBottomTabNavigator();
@@ -66,10 +69,16 @@ const App = () => {
               <Stack.Screen name="Register" options={{ headerShown: false }}>
                 {() => <Register setIsAuthenticated={setIsAuthenticated} />}
               </Stack.Screen>
+              <Stack.Screen name="Register2" options={{ headerShown: false }}>
+                {() => <Register2 setIsAuthenticated={setIsAuthenticated} />}
+              </Stack.Screen>
               <Stack.Screen name="PasedeLista" component={PasedeLista} options={{ headerShown: false }} />
               <Stack.Screen name="Grupos" component={Grupos} options={{ headerShown: false }} />
               <Stack.Screen name="GruposProfesor" component={GruposProfesor} options={{ headerShown: false }} />
               <Stack.Screen name="MainTab" component={MainTab} options={{ headerShown: false }} />
+              <Stack.Screen name="Profesor" component={Profesor} options={{ headerShown: false }} />
+              <Stack.Screen name="Alumno" component={Alumno} options={{ headerShown: false }} />
+              <Stack.Screen name="Inicio" component={Inicio} options={{ headerShown: false }} />
             </Stack.Navigator>
           </VStack>
         </NavigationContainer>

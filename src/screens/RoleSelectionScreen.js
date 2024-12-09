@@ -9,7 +9,7 @@ const RoleSelectionScreen = () => {
     const textColor = useColorModeValue('light.text.50', 'dark.text.50');
 
     const handleRoleSelect = (role) => {
-        navigation.navigate('Login', { role });  // Navegar a la pantalla de Login con el rol seleccionado
+        navigation.navigate("" + role + "");  // Navegar a la pantalla de Login con el rol seleccionado
     };
 
     return (
@@ -28,10 +28,10 @@ const RoleSelectionScreen = () => {
                 </Heading>
 
                 <VStack space={3} mt="5">
-                    <Button colorScheme="green" onPress={() => handleRoleSelect('alumno')}>
-                        INGRESAR COMO ALUMNO 
+                    <Button colorScheme="green" onPress={() => handleRoleSelect('Alumno')}>
+                        INGRESAR COMO ALUMNO
                     </Button>
-                    <Button colorScheme="green" onPress={() => handleRoleSelect('profesor')}>
+                    <Button colorScheme="green" onPress={() => handleRoleSelect('Profesor')}>
                         INGRESAR COMO PROFESOR
                     </Button>
                 </VStack>

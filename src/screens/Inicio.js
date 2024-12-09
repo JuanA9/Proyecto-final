@@ -10,7 +10,6 @@ const Inicio = () => {
   const buttonBgColor = useColorModeValue('green.500', 'green.300');
   const buttonHoverColor = useColorModeValue('green.600', 'green.400');
   const buttonTextColor = useColorModeValue('white', 'black');
-
   return (
     <Center flex={1} w="100%" bg={bgColor}>
       {/* Logo centrado */}

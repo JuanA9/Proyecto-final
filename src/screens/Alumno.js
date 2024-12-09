@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Text, Image } from 'react-native';
-import { NativeBaseProvider, Box, Heading, VStack, FormControl, HStack, Input, Button, Link, Center, useColorModeValue, useBreakpointValue } from "native-base";
+import { NativeBaseProvider, Box, Heading, VStack, FormControl, HStack, Input, Button, Link, Center, useColorModeValue, useBreakpointValue} from "native-base";
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
-const Alumno = ({ setIsAuthenticated }) => {
+const Alumno = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const navigation = useNavigation();
 
     const bgColor = useColorModeValue('light.background.50', 'dark.background.900');
@@ -14,14 +16,35 @@ const Alumno = ({ setIsAuthenticated }) => {
 
     const flexDir = useBreakpointValue({ base: 'column', lg: 'row' });
 
-    const handleLogin = () => {
-        if (email && password) { 
-            setIsAuthenticated(true);
-            navigation.navigate('MainTab'); 
+    const handleLogin = async () => {
+        if (email && password) {
+            try {
+                // Realiza la solicitud POST a la API
+                const response = await axios.post('http://192.168.1.3:3005/users/login', {
+                    usuario: email,
+                    contra: password,
+                    tipo : 0
+                });
+    
+                // Si la API responde correctamente, maneja el token y navega
+                if (response.data && response.data.token) {
+                    console.log('Login exitoso, token:', response.data.token);
+                    navigation.navigate('MainTab');
+                }
+            } catch (error) {
+                setErrorMessage('Error en la autenticación:', error);
+                // Muestra un mensaje de error basado en la respuesta
+                if (error.response && error.response.data) {
+                    setErrorMessage(`Error: ${error.response.data.message}`);
+                } else {
+                    setErrorMessage('Error de conexión. Por favor, intenta más tarde.');
+                }
+            }
         } else {
-            alert('Please enter your credentials'); 
+            setErrorMessage('LLENAR LOS CAMPOS SON NECESARIOS'); // Muestra alerta si faltan credenciales
         }
     };
+    
 
     return (
         <Center w="100%" bg={bgColor} flex={1}>
@@ -35,12 +58,12 @@ const Alumno = ({ setIsAuthenticated }) => {
                     Welcome
                 </Heading>
                 <Heading mt="1" color={textColor} fontWeight="medium" size="xs">
-                    Sign in to continue!
+                    Sign in to continue alumno!
                 </Heading>
 
                 <VStack space={3} mt="5" flexDirection={flexDir}>
                     <FormControl>
-                        <FormControl.Label>Email</FormControl.Label>
+                        <FormControl.Label>User</FormControl.Label>
                         <Input value={email} onChangeText={setEmail} />
                     </FormControl>
                     <FormControl>
@@ -56,13 +79,14 @@ const Alumno = ({ setIsAuthenticated }) => {
                     <Button mt="2" colorScheme="green" onPress={handleLogin}>
                         Login
                     </Button>
+                    {errorMessage && <Text>{errorMessage}</Text>}
                     <HStack mt="6" justifyContent="center">
                         <Text fontSize="sm" color={textColor}>
                             I'm a new user. 
                             <Button
                                 variant="link"
                                 colorScheme="green"
-                                onPress={() => navigation.navigate('Register')}>
+                                onPress={() => navigation.navigate('Register2')}>
                                 Register
                             </Button>
                         </Text>

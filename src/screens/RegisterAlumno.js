@@ -21,6 +21,8 @@ const RegisterScreen = () => {
             alert('No coinciden las contraseñas');
             return;
         }
+ 
+
         try {
             const response = await fetch('http://192.168.1.3:3005/users/register', { // Reemplaza con la URL de tu API
                 method: 'POST',
@@ -31,9 +33,8 @@ const RegisterScreen = () => {
                     usuario: email,
                     contra: password,
                     nombre: email, // Usar el correo como nombre
-                    tipo: 1, // Tipo fijo
+                    tipo: 0, // Tipo fijo
                 }),
-                
             });
 
             if (response.ok) {
@@ -62,7 +63,7 @@ const RegisterScreen = () => {
                     Welcome
                 </Heading>
                 <Heading mt="1" color={textColor} fontWeight="medium" size="xs">
-                    Sign in to continue Profesor!
+                    Sign in to continue Alumno!
                 </Heading>
                 <VStack space={3} mt="5" flexDirection={flexDir}>
                     <FormControl>

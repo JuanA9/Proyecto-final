@@ -4,7 +4,7 @@ import { NativeBaseProvider, Box, Heading, VStack, FormControl, HStack, Input, B
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
 
-const LoginScreen = ({ setIsAuthenticated }) => {
+const LoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigation = useNavigation();
@@ -18,8 +18,6 @@ const LoginScreen = ({ setIsAuthenticated }) => {
     // Maneja el inicio de sesión y guarda el historial
     const handleLogin = async () => {
         if (email && password) { 
-            setIsAuthenticated(true);
-
             // Guardar el inicio de sesión en el historial
             try {
                 const historial = await AsyncStorage.getItem('historial');
