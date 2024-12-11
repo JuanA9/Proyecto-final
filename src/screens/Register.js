@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, Image } from 'react-native';
 import { NativeBaseProvider, Box, Heading, VStack, FormControl, HStack, Input, Button, Center, useColorModeValue, useBreakpointValue } from "native-base";
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Importar AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';  // Importar AsyncStorage
 
 const RegisterScreen = () => {
     const [email, setEmail] = useState('');
@@ -22,7 +22,7 @@ const RegisterScreen = () => {
             return;
         }
         try {
-            const response = await fetch('http://192.168.1.3:3005/users/register', { // Reemplaza con la URL de tu API
+            const response = await fetch('http://192.168.0.6:3005/users/register', { // Reemplaza con la URL de tu API
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

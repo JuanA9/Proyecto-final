@@ -37,7 +37,7 @@ const Alumno = () => {
       try {
         // Realiza la solicitud POST a la API
         const response = await axios.post(
-          "http://192.168.1.3:3005/users/login",
+          "http://192.168.0.6:3005/users/login",
           {
             usuario: email,
             contra: password,
